@@ -1,7 +1,11 @@
+use crate::Vector;
 use anyhow::{anyhow, Result};
 use std::fmt;
 use std::fmt::Formatter;
 use std::ops::{Add, AddAssign, Mul};
+
+#[allow(dead_code)]
+const NUM_THREADS: usize = 4;
 
 pub struct Matrix<T> {
     data: Vec<T>,
@@ -10,9 +14,46 @@ pub struct Matrix<T> {
 }
 
 #[allow(dead_code)]
+pub struct MsgInput<T> {
+    idx: usize,
+    row: Vector<T>,
+    col: Vector<T>,
+}
+#[allow(dead_code)]
+pub struct MsgOutput<T> {
+    idx: usize,
+    value: T,
+}
+#[allow(dead_code)]
+pub struct Msg<T> {
+    input: MsgInput<T>,
+    sender: oneshot::Sender<MsgOutput<T>>,
+}
+
+#[allow(dead_code)]
+impl<T> MsgInput<T> {
+    pub fn new(idx: usize, row: Vector<T>, col: Vector<T>) -> Self {
+        Self { idx, row, col }
+    }
+}
+
+#[allow(dead_code)]
+impl<T> MsgOutput<T> {
+    pub fn new(idx: usize, value: T) -> Self {
+        Self { idx, value }
+    }
+}
+
+#[allow(dead_code)]
+impl<T> Msg<T> {
+    pub fn new(input: MsgInput<T>, sender: oneshot::Sender<MsgOutput<T>>) -> Self {
+        Self { input, sender }
+    }
+}
+
 pub fn multiply<T>(a: &Matrix<T>, b: &Matrix<T>) -> Result<Matrix<T>>
 where
-    T: Default + Copy + Add<Output = T> + AddAssign + Mul<Output = T>,
+    T: Default + Copy + Add<Output = T> + AddAssign + Mul<Output = T> + Send + 'static,
 {
     if a.col != b.row {
         return Err(anyhow!("矩阵维度不匹配 a.col != b.row"));
@@ -34,7 +75,6 @@ where
     })
 }
 
-#[allow(dead_code)]
 impl<T> Matrix<T> {
     pub fn new(data: impl Into<Vec<T>>, row: usize, col: usize) -> Self {
         Self {
