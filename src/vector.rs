@@ -29,3 +29,14 @@ impl<T> Vector<T> {
         Self { data: data.into() }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    #[test]
+    fn test_dot_product() {
+        let a = Vector::new([1, 2, 3]);
+        let b = Vector::new([4, 5, 6]);
+        assert_eq!(dot_product(a, b).unwrap(), 32);
+    }
+}

@@ -1,2 +1,2 @@
-# RCLI
-A Rust ClI tools.
+# Rust concurrency
+exercise rust programing with concurrency

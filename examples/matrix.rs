@@ -6,5 +6,7 @@ fn main() -> Result<()> {
     let b = Matrix::new([5, 6, 7, 8], 2, 2);
     let ret = multiply(&a, &b)?;
     println!("{:?}", ret);
+    let ret = a * b;
+    println!("{:?}", ret);
     Ok(())
 }
