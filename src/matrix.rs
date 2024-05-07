@@ -5,7 +5,6 @@ use std::ops::{Add, AddAssign, Mul};
 use std::sync::mpsc;
 use std::{fmt, thread};
 
-#[allow(dead_code)]
 const NUM_THREADS: usize = 4;
 
 pub struct Matrix<T> {
@@ -14,13 +13,11 @@ pub struct Matrix<T> {
     col: usize,
 }
 
-#[allow(dead_code)]
 pub struct MsgInput<T> {
     idx: usize,
     row: Vector<T>,
     col: Vector<T>,
 }
-#[allow(dead_code)]
 pub struct MsgOutput<T> {
     idx: usize,
     value: T,
@@ -30,21 +27,18 @@ pub struct Msg<T> {
     sender: oneshot::Sender<MsgOutput<T>>,
 }
 
-#[allow(dead_code)]
 impl<T> MsgInput<T> {
     pub fn new(idx: usize, row: Vector<T>, col: Vector<T>) -> Self {
         Self { idx, row, col }
     }
 }
 
-#[allow(dead_code)]
 impl<T> MsgOutput<T> {
     pub fn new(idx: usize, value: T) -> Self {
         Self { idx, value }
     }
 }
 
-#[allow(dead_code)]
 impl<T> Msg<T> {
     pub fn new(input: MsgInput<T>, sender: oneshot::Sender<MsgOutput<T>>) -> Self {
         Self { input, sender }
