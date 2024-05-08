@@ -1,28 +1,13 @@
 use anyhow::Result;
-use concurrency::Metrics;
 use rand::Rng;
 use std::thread;
 use std::time::Duration;
-const N: usize = 2;
-const M: usize = 4;
-fn main() -> Result<()> {
-    let metrics = Metrics::new();
-    println!("{}", metrics);
-    for idx in 0..N {
-        task_worker(idx, metrics.clone())?;
-    }
 
-    for _ in 0..M {
-        request_worker(metrics.clone())?;
-    }
-
-    loop {
-        thread::sleep(Duration::from_secs(2));
-        println!("{}", metrics);
-    }
+pub trait Metrics {
+    fn inc(&self, key: impl AsRef<str>) -> Result<()>;
 }
 
-fn task_worker(idx: usize, metrics: Metrics) -> Result<()> {
+pub fn task_worker(idx: usize, metrics: impl Metrics + Send + 'static) -> Result<()> {
     thread::spawn(move || {
         loop {
             let mut rng = rand::thread_rng();
@@ -35,7 +20,7 @@ fn task_worker(idx: usize, metrics: Metrics) -> Result<()> {
     Ok(())
 }
 
-fn request_worker(metrics: Metrics) -> Result<()> {
+pub fn request_worker(metrics: impl Metrics + Send + 'static) -> Result<()> {
     thread::spawn(move || {
         loop {
             let mut rng = rand::thread_rng();

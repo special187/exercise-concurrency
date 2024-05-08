@@ -1,10 +1,10 @@
-extern crate core;
-
 mod matrix;
+mod metrics;
 mod vector;
 
-mod metrics;
+mod util;
 
 pub use matrix::{multiply, Matrix};
 pub use metrics::*;
+pub use util::*;
 pub use vector::*;
