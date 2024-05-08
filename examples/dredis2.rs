@@ -24,13 +24,12 @@ fn main() -> Result<()> {
 
 fn process_redis_conn(mut stream: TcpStream, raddr: SocketAddr) -> Result<()> {
     loop {
-        let mut buf = Vec::with_capacity(BUF_SIZE);
-
+        let mut buf = vec![0; BUF_SIZE];
         match stream.read(&mut buf) {
             Ok(0) => break,
             Ok(n) => {
                 info!("read {} bytes", n);
-                let line = String::from_utf8_lossy(&buf);
+                let line = String::from_utf8_lossy(&buf[0..n]);
                 info!("{:?}", line);
                 stream.write_all(b"+OK\r\n")?;
             }
